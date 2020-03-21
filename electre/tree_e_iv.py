@@ -105,7 +105,7 @@ def tree_electre_iv(dataset, target_assignment = [], P = [], Q = [], V = [], eli
 ###############################################################################
     
 # Prediction
-def predict(models, dataset, verbose = True):
+def predict_e_iv(models, dataset, verbose = True):
     prediction     = []
     solutions      = [[]]*dataset.shape[0]
     ensemble_model = copy.deepcopy(models)
@@ -129,7 +129,7 @@ def predict(models, dataset, verbose = True):
 ###############################################################################
 
 # Metrics
-def metrics(models):
+def metrics_e_iv(models):
     ensemble_model      = copy.deepcopy(models)   
     count_features      = [0]*(len(ensemble_model[0][1]) + len(ensemble_model[0][2]))
     kdl_mean            = 0

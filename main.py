@@ -21,7 +21,7 @@ from electre.util_e_iv  import electre_iv
 
 ##############################################################################
 
-# loading Dataset
+# Loading Dataset
 dataset = np.array([
                 [1/589176 , 37188, 1/0.476, 0.00],   #a1
                 [1/1548354, 45481, 1/0.600, 0.33],   #a2
@@ -33,6 +33,7 @@ dataset = np.array([
                 [1/1547073, 21919, 1/0.496, 0.00]    #a8
                 ])
 
+# Normalizing Dataset
 dataset = dataset / dataset.max(axis = 0)
 
 ##############################################################################

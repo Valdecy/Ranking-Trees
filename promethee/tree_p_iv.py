@@ -257,5 +257,4 @@ def metrics_p_iv(models):
          s_tresholds_std[i] = (s_tresholds_std[i]/(count_features[i]-1))**(1/2)
     f_tresholds_mean = tranform_shape(f_tresholds_mean, strg = False)
     return mean_features, std_features, kdl_mean, kdl_std, q_tresholds_mean, q_tresholds_std, p_tresholds_mean, p_tresholds_std, s_tresholds_mean, s_tresholds_std, f_tresholds_mean
-
 ###############################################################################

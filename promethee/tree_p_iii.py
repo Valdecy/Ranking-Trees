@@ -126,7 +126,7 @@ def tree_promethee_iii(dataset, target_assignment = [], W = [], Q = [], P = [], 
         F_ga = tranform_shape(F_ga, strg = False)
         L_ga = ga[-2]
         for i in range(0, len(S_ga)):
-            if (F_ga[i] != 't7'):
+            if (F_ga[i] != 't6'):
                 S_ga[i] = 0
         kendall_tau = ga[-1]*(-1)
         y_hat = promethee_iii(dataset = random_dataset, W = W_ga, Q = Q_ga, S = S_ga, P = P_ga, F = F_ga, lmbd = L_ga) 

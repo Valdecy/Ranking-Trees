@@ -14,7 +14,7 @@ from promethee.util_p_i import promethee_i, genetic_algorithm, rank
 ###############################################################################
 
 # Main    
-def tree_promethee_i(dataset, target_assignment = [], W = [], Q = [], P = [], S = [], F = [], lmbd = [], elite = 1, eta = 1, mu = 2, population_size = 25, mutation_rate = 0.01, generations = 150, samples = 0.70, number_of_models = 100):
+def tree_promethee_i(dataset, target_assignment = [], W = [], Q = [], P = [], S = [], F = [], elite = 1, eta = 1, mu = 2, population_size = 25, mutation_rate = 0.01, generations = 150, samples = 0.70, number_of_models = 100):
     count           = 0
     ensemble_model  = []
     if (len(target_assignment) == 0):
@@ -40,8 +40,7 @@ def tree_promethee_i(dataset, target_assignment = [], W = [], Q = [], P = [], S 
         P_t = variable_list[random_dataset.shape[1]*2:random_dataset.shape[1]*3]
         S_t = variable_list[random_dataset.shape[1]*3:random_dataset.shape[1]*4]
         F_t = variable_list[random_dataset.shape[1]*4:random_dataset.shape[1]*5]
-        L_t = variable_list[-1]
-        p_i = promethee_i(dataset = random_dataset, W = W_t, Q = Q_t, S = S_t, P = P_t, F = F_t, lmbd = L_t)
+        p_i = promethee_i(dataset = random_dataset, W = W_t, Q = Q_t, S = S_t, P = P_t, F = F_t)
         p_i = rank(p_i)
         kendall_tau, _ = stats.kendalltau(random_y, p_i)
         if (math.isnan(kendall_tau)):
@@ -111,12 +110,6 @@ def tree_promethee_i(dataset, target_assignment = [], W = [], Q = [], P = [], S 
         elif (len(random_F) > 0):
             min_values.extend(copy.deepcopy(random_F))
             max_values.extend(copy.deepcopy(random_F))
-        if (isinstance(lmbd, list)):
-            min_values.extend([0]) 
-            max_values.extend([1]) 
-        else:
-            min_values.extend([lmbd])
-            max_values.extend([lmbd]) 
         ga = genetic_algorithm(population_size = population_size, mutation_rate = mutation_rate, elite = elite, min_values = min_values, max_values = max_values, eta = eta, mu = mu, generations = generations, size = random_dataset.shape[1], target_function = target_function)
         W_ga = ga[0:random_dataset.shape[1]]
         Q_ga = ga[random_dataset.shape[1]*1:random_dataset.shape[1]*2]
@@ -124,14 +117,13 @@ def tree_promethee_i(dataset, target_assignment = [], W = [], Q = [], P = [], S 
         S_ga = ga[random_dataset.shape[1]*3:random_dataset.shape[1]*4]
         F_ga = ga[random_dataset.shape[1]*4:random_dataset.shape[1]*5]
         F_ga = tranform_shape(F_ga, strg = False)
-        L_ga = ga[-2]
         for i in range(0, len(S_ga)):
             if (F_ga[i] != 't7'):
                 S_ga[i] = 0
         kendall_tau = ga[-1]*(-1)
-        y_hat = promethee_i(dataset = random_dataset, W = W_ga, Q = Q_ga, S = S_ga, P = P_ga, F = F_ga, lmbd = L_ga) 
+        y_hat = promethee_i(dataset = random_dataset, W = W_ga, Q = Q_ga, S = S_ga, P = P_ga, F = F_ga) 
         y_hat = rank(y_hat)
-        ensemble_model.append([W_ga, kendall_tau, criteria, criteria_remove, cases_remove, y_hat, random_y, Q_ga, P_ga, S_ga, F_ga, L_ga])
+        ensemble_model.append([W_ga, kendall_tau, criteria, criteria_remove, cases_remove, y_hat, random_y, Q_ga, P_ga, S_ga, F_ga])
         count = count + 1
         print('Model # ' + str(count) ) 
     return ensemble_model
@@ -146,7 +138,7 @@ def predict_p_i(models, dataset, verbose = True):
     for i in range(0, len(ensemble_model)):
         alternatives = np.copy(dataset)  
         alternatives = np.delete(alternatives, ensemble_model[i][3], axis = 1)
-        rank_ = promethee_i(dataset = alternatives, W = ensemble_model[i][0], Q = ensemble_model[i][7], S = ensemble_model[i][9], P = ensemble_model[i][8], F = ensemble_model[i][10], lmbd = ensemble_model[i][11])
+        rank_ = promethee_i(dataset = alternatives, W = ensemble_model[i][0], Q = ensemble_model[i][7], S = ensemble_model[i][9], P = ensemble_model[i][8], F = ensemble_model[i][10])
         rank_ = rank(rank_)
         for j in range(0, len(solutions)):
             if (i == 0):
@@ -220,8 +212,6 @@ def metrics_p_i(models):
     s_tresholds_std     = [0]*(len(ensemble_model[0][2]) + len(ensemble_model[0][3]))
     f_tresholds         = [0]*(len(ensemble_model[0][2]) + len(ensemble_model[0][3]))
     f_tresholds_mean    = [0]*(len(ensemble_model[0][2]) + len(ensemble_model[0][3]))
-    L_mean              = 0
-    L_std               = 0
     for i in range(0, len(ensemble_model)):
         weights  = ensemble_model[i][0]   
         criteria = ensemble_model[i][2] 
@@ -230,7 +220,6 @@ def metrics_p_i(models):
         p        = ensemble_model[i][8] 
         s        = ensemble_model[i][9] 
         f        = tranform_shape(ensemble_model[i][10], strg = True)
-        L_mean   = L_mean  + ensemble_model[i][11]
         for j in range(0, len(criteria)):
             features_importance[criteria[j]] = features_importance[criteria[j]] + weights[j] 
             q_tresholds[criteria[j]]         = q_tresholds[criteria[j]] + q[j]
@@ -239,7 +228,6 @@ def metrics_p_i(models):
             f_tresholds[criteria[j]]         = f_tresholds[criteria[j]] + f[j]
             count_features[criteria[j]]      = count_features[criteria[j]] + 1
     kdl_mean = kdl_mean/len(ensemble_model)
-    L_mean   = L_mean/len(ensemble_model)
     for i in range(0, len(mean_features)):
         mean_features[i]    = features_importance[i]/count_features[i]
         q_tresholds_mean[i] = q_tresholds[i]/count_features[i]
@@ -253,20 +241,18 @@ def metrics_p_i(models):
         q        = ensemble_model[i][7] 
         p        = ensemble_model[i][8] 
         s        = ensemble_model[i][9] 
-        L_std    = L_std + (ensemble_model[i][11] - L_mean)**2
         for j in range(0, len(criteria)):
             std_features[criteria[j]]    = std_features[criteria[j]]    + (weights[j] - mean_features[criteria[j]])**2
             q_tresholds_std[criteria[j]] = q_tresholds_std[criteria[j]] + (q[j] - q_tresholds_mean[criteria[j]])**2
             p_tresholds_std[criteria[j]] = p_tresholds_std[criteria[j]] + (p[j] - p_tresholds_mean[criteria[j]])**2
             s_tresholds_std[criteria[j]] = s_tresholds_std[criteria[j]] + (s[j] - s_tresholds_mean[criteria[j]])**2
     kdl_std = (kdl_std/(len(ensemble_model)-1))**(1/2)
-    L_std   = (L_std/(len(ensemble_model)-1))**(1/2)
     for i in range(0, len(std_features)): 
          std_features[i]    = (std_features[i]/(count_features[i]-1))**(1/2)
          q_tresholds_std[i] = (q_tresholds_std[i]/(count_features[i]-1))**(1/2)
          p_tresholds_std[i] = (p_tresholds_std[i]/(count_features[i]-1))**(1/2)
          s_tresholds_std[i] = (s_tresholds_std[i]/(count_features[i]-1))**(1/2)
     f_tresholds_mean = tranform_shape(f_tresholds_mean, strg = False)
-    return mean_features, std_features, kdl_mean, kdl_std, q_tresholds_mean, q_tresholds_std, p_tresholds_mean, p_tresholds_std, s_tresholds_mean, s_tresholds_std, f_tresholds_mean, L_mean, L_std 
+    return mean_features, std_features, kdl_mean, kdl_std, q_tresholds_mean, q_tresholds_std, p_tresholds_mean, p_tresholds_std, s_tresholds_mean, s_tresholds_std, f_tresholds_mean
 
 ###############################################################################

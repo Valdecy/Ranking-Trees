@@ -40,10 +40,10 @@ def tree_promethee_iv(dataset, target_assignment = [], W = [], Q = [], P = [], S
         P_t = variable_list[random_dataset.shape[1]*2:random_dataset.shape[1]*3]
         S_t = variable_list[random_dataset.shape[1]*3:random_dataset.shape[1]*4]
         F_t = variable_list[random_dataset.shape[1]*4:random_dataset.shape[1]*5]
-        p_ii = promethee_iv(dataset = random_dataset, W = W_t, Q = Q_t, S = S_t, P = P_t, F = F_t)
-        p_ii = p_ii[:,0]
-        p_ii = p_ii.tolist()
-        kendall_tau, _ = stats.kendalltau(random_y, p_ii)
+        p_iv = promethee_iv(dataset = random_dataset, W = W_t, Q = Q_t, S = S_t, P = P_t, F = F_t)
+        p_iv = p_iv[:,0]
+        p_iv = p_iv.tolist()
+        kendall_tau, _ = stats.kendalltau(random_y, p_iv)
         if (math.isnan(kendall_tau)):
             kendall_tau = -1
         return -kendall_tau

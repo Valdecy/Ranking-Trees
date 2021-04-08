@@ -157,7 +157,7 @@ rank_plot(prediction_p_ii)
 models_p_iii = tree_promethee_iii(dataset, target_assignment = [], W = [], Q = [], P = [], S = [], F = [], lmbd = [], elite = 1, eta = 1, mu = 2, population_size = 25, mutation_rate = 0.01, generations = 150, samples = 0.70, number_of_models = 10)
 
 # Elicitated Parameters
-p_iii_mean_features, p_iii_std_features, p_iii_kdl_mean, p_iii_kdl_std, p_iii_q_tresholds_mean, p_iii_q_tresholds_std, p_iii_p_tresholds_mean, p_iii_p_tresholds_std, p_iii_s_tresholds_mean, p_iii_s_tresholds_std, p_iii_f_tresholds_mean, lmbd_mean = metrics_p_iii(models_p_iii)
+p_iii_mean_features, p_iii_std_features, p_iii_kdl_mean, p_iii_kdl_std, p_iii_q_tresholds_mean, p_iii_q_tresholds_std, p_iii_p_tresholds_mean, p_iii_p_tresholds_std, p_iii_s_tresholds_mean, p_iii_s_tresholds_std, p_iii_f_tresholds_mean, lmbd_mean, lmbd_std = metrics_p_iii(models_p_iii)
 
 # Rank with Elicitated Parameters
 p_iii = promethee_iii(dataset = dataset, W = p_iii_mean_features, Q = p_iii_q_tresholds_mean, S = p_iii_s_tresholds_mean, P = p_iii_p_tresholds_mean, F = p_iii_f_tresholds_mean, lmbd = lmbd_mean)

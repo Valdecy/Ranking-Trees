@@ -1,5 +1,5 @@
 # Ranking-Trees
-Ranking-Trees Multicriteria Algorithm
+Ranking-Trees Multicriteria Algorithm (https://www.emerald.com/insight/content/doi/10.1108/DTA-07-2020-0161/full/html)
 
 Examples in the file "main.py". Clone this repository and keep the "electre" folder and "main.py" in the same directory.
 

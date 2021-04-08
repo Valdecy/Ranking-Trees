@@ -118,7 +118,7 @@ def tree_promethee_i(dataset, target_assignment = [], W = [], Q = [], P = [], S 
         F_ga = ga[random_dataset.shape[1]*4:random_dataset.shape[1]*5]
         F_ga = tranform_shape(F_ga, strg = False)
         for i in range(0, len(S_ga)):
-            if (F_ga[i] != 't7'):
+            if (F_ga[i] != 't6'):
                 S_ga[i] = 0
         kendall_tau = ga[-1]*(-1)
         y_hat = promethee_i(dataset = random_dataset, W = W_ga, Q = Q_ga, S = S_ga, P = P_ga, F = F_ga) 
